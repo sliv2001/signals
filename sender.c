@@ -1,3 +1,5 @@
+#include "header.h"
+
 int fdf, pid, depth=0;
 size_t file_size;
 struct stat buf;
@@ -20,7 +22,8 @@ void Send(int a, int sig){
 void sendit(){
 	int k, i;
 	int a[256];
-	if (sigqueue(pid, 0, 0)<0)
+	union sigval value;
+	if (sigqueue(pid, 0, value)<0)
 		err(-1, "no process exist with pid %d", pid);
 	for (i=0; i<file_size/1024; i++){
 		read(fdf, &a, 1024);
@@ -39,7 +42,7 @@ int main(int argc, char** argv){
 		err(-1, "wrong pid");
 	if (stat(argv[1], &buf)<0)
 		err(-1, "wrong file");
-	if ((fdf = open(argv[1], O_RDONLY)<0)
+	if ((fdf = open(argv[1], O_RDONLY))<0)
 		err(-1, "wrong file");
 	if (!S_ISREG(buf.st_mode))
 		errx(-1, "not reg file");
