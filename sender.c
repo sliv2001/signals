@@ -31,6 +31,11 @@ void sendit(){
 			Send(a[k], SIGUSR1);
 		}
 	}
+	k = 1024;
+	k=read(fdf, &a, k);
+	for (i=0; i<k; i++){
+		Send(a[k], SIGUSR1);
+	}
 	Send(0, SIGUSR2);
 }
 
