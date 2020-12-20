@@ -17,7 +17,7 @@ void stop(int sig, siginfo_t* info, void* stuff){
 	while ((buf = ((char*)&a[pos-1])[i]) != 0){
 		write(fdt, &buf, 1);
 		i++;
-		if (i = sizeof(int))
+		if (i == sizeof(int))
 			break;
 	}
 	exit(0);

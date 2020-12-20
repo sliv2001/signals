@@ -24,6 +24,7 @@ void sendit(){
 	int k, i;
 	int a[1024/sizeof(int)];
 	union sigval value;
+	memset(&a, 0, sizeof(a));
 	if (sigqueue(pid, 0, value)<0)
 		err(-1, "no process exist with pid %d", pid);
 	for (i=0; i<file_size/1024; i++){
