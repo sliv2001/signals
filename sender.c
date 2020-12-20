@@ -1,4 +1,4 @@
-#include "headerh"
+#include "header.h"
 
 int fdf, pid, depth=0;
 size_t file_size;
@@ -7,7 +7,7 @@ struct stat buf;
 void Send(int a, int sig){
 	union sigval value;
 	value.sival_int = a;
-	sleep(1);
+//	sleep(1);
 	if (sigqueue(pid, sig, value)<0){
 		if (errno == EAGAIN&& depth<=3){
 			usleep(10<<depth);
@@ -29,16 +29,16 @@ void sendit(){
 	for (i=0; i<file_size/1024; i++){
 		read(fdf, &a, 1024);
 		for (k=0; k<256; k++){
-			Send(a[k], SIGUSR1);
+			Send(a[k], SIGRTMIN);
 		}
 	}
 	k = 1024;
 	k=read(fdf, &a, k);
 	for (i=0; i<k/sizeof(int); i++){
-		Send(a[i], SIGUSR1);
+		Send(a[i], SIGRTMIN);
 	}
-	Send(a[i], SIGUSR1);
-	Send(0, SIGUSR2);
+	Send(a[i], SIGRTMIN);
+	Send(0, SIGRTMIN+1);
 }
 
 int main(int argc, char** argv){

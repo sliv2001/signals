@@ -13,7 +13,7 @@ void receive(int sig, siginfo_t* info, void* stuff){
 
 void stop(int sig, siginfo_t* info, void* stuff){
 	char buf = 0, i = 0;
-	write(fdt, &a, pos-1);
+	write(fdt, &a, (pos-1)*sizeof(int));
 	while ((buf = ((char*)&a[pos-1])[i]) != 0){
 		write(fdt, &buf, 1);
 		i++;
@@ -29,8 +29,8 @@ int main(int argc, char** argv){
 	pid_t pid = getpid();
 	memset(&act, 0, sizeof(act));
 	sigemptyset(&set);
-	sigaddset(&set, SIGUSR1);
-	sigaddset(&set, SIGUSR2);
+	sigaddset(&set, SIGRTMIN);
+	sigaddset(&set, SIGRTMIN+1);
 	printf("%d\n", pid);
 	if (argc!=2)
 		errx(-1, "wrong args");
@@ -39,11 +39,11 @@ int main(int argc, char** argv){
 	act.sa_sigaction=&receive;
 	act.sa_mask=set;
 	act.sa_flags = SA_SIGINFO;
-	if (sigaction(SIGUSR1, &act, NULL)<0)
+	if (sigaction(SIGRTMIN, &act, NULL)<0)
 		err(-1, "couldnot make sigaction");
 	act.sa_sigaction = &stop;
 	act.sa_flags = SA_SIGINFO;
-	if (sigaction(SIGUSR2, &act, NULL)<0)
+	if (sigaction(SIGRTMIN+1, &act, NULL)<0)
 		err(-1, "couldnot make sigaction");
 	while (1)
 		sleep(10000);
