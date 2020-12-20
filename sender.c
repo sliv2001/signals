@@ -1,4 +1,4 @@
-#include "header.h"
+#include "headerh"
 
 int fdf, pid, depth=0;
 size_t file_size;
@@ -7,6 +7,7 @@ struct stat buf;
 void Send(int a, int sig){
 	union sigval value;
 	value.sival_int = a;
+	sleep(1);
 	if (sigqueue(pid, sig, value)<0){
 		if (errno == EAGAIN&& depth<=3){
 			usleep(10<<depth);
@@ -21,7 +22,7 @@ void Send(int a, int sig){
 
 void sendit(){
 	int k, i;
-	int a[256];
+	int a[1024/sizeof(int)];
 	union sigval value;
 	if (sigqueue(pid, 0, value)<0)
 		err(-1, "no process exist with pid %d", pid);
@@ -33,9 +34,10 @@ void sendit(){
 	}
 	k = 1024;
 	k=read(fdf, &a, k);
-	for (i=0; i<k; i++){
-		Send(a[k], SIGUSR1);
+	for (i=0; i<k/sizeof(int); i++){
+		Send(a[i], SIGUSR1);
 	}
+	Send(a[i], SIGUSR1);
 	Send(0, SIGUSR2);
 }
 
